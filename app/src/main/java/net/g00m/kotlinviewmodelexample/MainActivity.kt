@@ -3,7 +3,6 @@ package net.g00m.kotlinviewmodelexample
 import android.databinding.BaseObservable
 import android.databinding.Bindable
 import android.databinding.DataBindingUtil
-import android.databinding.ViewDataBinding
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.RecyclerView
@@ -61,7 +60,7 @@ class MainActivity : AppCompatActivity() {
     /**
      * ViewHolder for the RecyclerView with a little trick to super(view : View)
      */
-    class BaseViewHolder (view : ViewDataBinding) : RecyclerView.ViewHolder(view.root) {}
+    class BaseViewHolder (val view : ItemViewModelBinding) : RecyclerView.ViewHolder(view.root) {}
 
     class BaseAdapter(val strings : Array<String>) : RecyclerView.Adapter<BaseViewHolder>() {
 
@@ -69,7 +68,9 @@ class MainActivity : AppCompatActivity() {
             return strings.size
         }
 
-        override fun onBindViewHolder(holder: BaseViewHolder?, position: Int) {}
+        override fun onBindViewHolder(holder: BaseViewHolder?, position: Int) {
+            holder?.view?.viewModel = ViewModel(strings.get(position))
+        }
 
         /**
          * Bind the ViewModel to the ViewHolder
@@ -82,7 +83,6 @@ class MainActivity : AppCompatActivity() {
              * It is named after your layout file. In this case after 'R.layout.item_view_model'.
              */
             val binding : ItemViewModelBinding = DataBindingUtil.inflate(layoutInflater, R.layout.item_view_model, parent, false)
-            binding.viewModel = ViewModel(strings.get(viewType))
 
             return BaseViewHolder(binding)
 
