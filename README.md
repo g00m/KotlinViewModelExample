@@ -32,27 +32,37 @@ Add the *databinding:compiler* to your build.gradle.
 	class BaseViewHolder (view : ViewDataBinding) : RecyclerView.ViewHolder(view.root) {}
 
 ## BaseAdapter
-	class BaseAdapter(val strings : Array<String>) : RecyclerView.Adapter<BaseViewHolder>() {
+	class BaseViewHolder (val view : ItemViewModelBinding) : RecyclerView.ViewHolder(view.root) {}
 	
-	    override fun getItemCount(): Int {
-	        return strings.size
-	    }
+	    class BaseAdapter(val strings : Array<String>) : RecyclerView.Adapter<BaseViewHolder>() {
 	
-	    override fun onBindViewHolder(holder: BaseViewHolder?, position: Int) {}
+	        override fun getItemCount(): Int {
+	            return strings.size
+	        }
 	
-	    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): BaseViewHolder {
-	        val layoutInflater : LayoutInflater = LayoutInflater.from(parent?.context)
+	        override fun onBindViewHolder(holder: BaseViewHolder?, position: Int) {
+	            holder?.view?.viewModel = ViewModel(strings.get(position))
+	        }
 	
-	        val binding : ItemViewModelBinding = DataBindingUtil.inflate(layoutInflater, R.layout.item_view_model, parent, false)
-	        binding.viewModel = ViewModel(strings.get(viewType))
+	        /**
+	         * Bind the ViewModel to the ViewHolder
+	         */
+	        override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): BaseViewHolder {
+	            val layoutInflater : LayoutInflater = LayoutInflater.from(parent?.context)
 	
-	        return BaseViewHolder(binding)
+	            /**
+	             * The ItemViewModelBinding will be generated from 'com.android.databinding' for you.
+	             * It is named after your layout file. In this case after 'R.layout.item_view_model'.
+	             */
+	            val binding : ItemViewModelBinding = DataBindingUtil.inflate(layoutInflater, R.layout.item_view_model, parent, false)
+	
+	            return BaseViewHolder(binding)
 	
 	    }
 	
 	}
 
-## XML 
+## XML
 	<data>
 	    <variable
 	        name="viewModel"
